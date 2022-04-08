@@ -1,7 +1,9 @@
 # Импортируем необходимые классы.
 # САМ БОТ ЗДЕСЬ: http://t.me/YLWordBot
 import logging
-from telegram.ext import Updater, MessageHandler, Filters
+import json
+import random
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
 # Запускаем логгирование
 logging.basicConfig(
@@ -12,16 +14,14 @@ logger = logging.getLogger(__name__)
 
 TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 
+# Городов всего: 10969
+with open('cities.json', encoding="utf-8") as city_file:
+    city_data = json.load(city_file)
+print(len(city_data["city"]))
 
-# Определяем функцию-обработчик сообщений.
-# У неё два параметра, сам бот и класс updater, принявший сообщение.
-def echo(update, context):
-    # У объекта класса Updater есть поле message,
-    # являющееся объектом сообщения.
-    # У message есть поле text, содержащее текст полученного сообщения,
-    # а также метод reply_text(str),
-    # отсылающий ответ пользователю, от которого получено сообщение.
-    update.message.reply_text("Привет, Даша :D")
+
+def goroda(update, context):
+    update.message.reply_text(city_data["city"][random.randint(0, 10969)]["name"])
 
 
 def main():
@@ -32,15 +32,7 @@ def main():
     # Получаем из него диспетчер сообщений.
     dp = updater.dispatcher
 
-    # Создаём обработчик сообщений типа Filters.text
-    # из описанной выше функции echo()
-    # После регистрации обработчика в диспетчере
-    # эта функция будет вызываться при получении сообщения
-    # с типом "текст", т. е. текстовых сообщений.
-    text_handler = MessageHandler(Filters.text, echo)
-
-    # Регистрируем обработчик в диспетчере.
-    dp.add_handler(text_handler)
+    dp.add_handler(CommandHandler("goroda", goroda))
     # Запускаем цикл приема и обработки сообщений.
     updater.start_polling()
 
