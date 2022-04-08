@@ -1,16 +1,54 @@
-# This is a sample Python script.
+# Импортируем необходимые классы.
+# САМ БОТ ЗДЕСЬ: http://t.me/YLWordBot
+import logging
+from telegram.ext import Updater, MessageHandler, Filters
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Запускаем логгирование
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
+)
+
+logger = logging.getLogger(__name__)
+
+TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Определяем функцию-обработчик сообщений.
+# У неё два параметра, сам бот и класс updater, принявший сообщение.
+def echo(update, context):
+    # У объекта класса Updater есть поле message,
+    # являющееся объектом сообщения.
+    # У message есть поле text, содержащее текст полученного сообщения,
+    # а также метод reply_text(str),
+    # отсылающий ответ пользователю, от которого получено сообщение.
+    update.message.reply_text("Привет, Даша :D")
 
 
-# Press the green button in the gutter to run the script.
+def main():
+    # Создаём объект updater.
+    # Вместо слова "TOKEN" надо разместить полученный от @BotFather токен
+    updater = Updater(TOKEN)
+
+    # Получаем из него диспетчер сообщений.
+    dp = updater.dispatcher
+
+    # Создаём обработчик сообщений типа Filters.text
+    # из описанной выше функции echo()
+    # После регистрации обработчика в диспетчере
+    # эта функция будет вызываться при получении сообщения
+    # с типом "текст", т. е. текстовых сообщений.
+    text_handler = MessageHandler(Filters.text, echo)
+
+    # Регистрируем обработчик в диспетчере.
+    dp.add_handler(text_handler)
+    # Запускаем цикл приема и обработки сообщений.
+    updater.start_polling()
+
+    # Ждём завершения приложения.
+    # (например, получения сигнала SIG_TERM при нажатии клавиш Ctrl+C)
+    updater.idle()
+
+
+# Запускаем функцию main() в случае запуска скрипта.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()
