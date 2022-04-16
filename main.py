@@ -42,14 +42,21 @@ def sure(update, context):
 
 def goroda_player_turn(update, context):
     word = update.message.text
+    word = ' '.join([i.lower().capitalize() for i in word.split()])
     print(word)
     word = word.lower().capitalize().replace('ё', 'e')
     try:
-        first_key = city_data[word[0].upper()]
-        if word not in first_key:
+        first_key_words = city_data[word[0].upper()]
+        if word in used_cities:
+            update.message.reply_text(f'Город {word} уже упоминался. Давай ещё раз и не повторяйся!')
+            raise KeyError
+        if word not in first_key_words:
+            update.message.reply_text('Нет в словаре')
+            print(first_key_words)
             raise KeyError
         if not(used_cities[-1][-1] == word[0].lower() or
                 used_cities[-1][-2] == word[0].lower() and used_cities[-1][-1].lower() in 'ъыь'):
+            update.message.reply_text('Не совпадает с буквой')
             raise KeyError
         used_cities.append(word)
         print(used_cities)
@@ -57,7 +64,6 @@ def goroda_player_turn(update, context):
         update.message.reply_text(f'Принято! Мой город: {word}')
         return 2
     except KeyError:
-        update.message.reply_text('Город не совпадает с буквой либо я его не припомню в своей памяти... А ну давай что-нибудь другое!')
         return 2
 
 
