@@ -43,8 +43,9 @@ def sure(update, context):
 def goroda_player_turn(update, context):
     word = update.message.text
     word = ' '.join([i.lower().capitalize() for i in word.split()])
-    print(word)
-    word = word.lower().capitalize().replace('ё', 'e')
+    word = '-'.join([i.lower().capitalize() for i in word.split('-')])
+    word = word.replace('ё', 'e')
+    word = word.replace('Ё', 'Е')
     try:
         first_key_words = city_data[word[0].upper()]
         if word in used_cities:
@@ -52,6 +53,7 @@ def goroda_player_turn(update, context):
             raise KeyError
         if word not in first_key_words:
             update.message.reply_text('Нет в словаре')
+            print(word)
             print(first_key_words)
             raise KeyError
         if not(used_cities[-1][-1] == word[0].lower() or
