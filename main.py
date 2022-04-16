@@ -3,7 +3,7 @@
 import logging
 import json
 import random
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler,ConversationHandler
 
 # Запускаем логгирование
 logging.basicConfig(
@@ -15,13 +15,68 @@ logger = logging.getLogger(__name__)
 TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 
 # Городов всего: 10969
-with open('cities.json', encoding="utf-8") as city_file:
+with open('sorted_cities.json', encoding="utf-8") as city_file:
     city_data = json.load(city_file)
-print(len(city_data["city"]))
+
+used_cities = []
 
 
-def goroda(update, context):
-    update.message.reply_text(city_data["city"][random.randint(0, 10969)]["name"])
+def start_goroda(update, context):
+    update.message.reply_text("Приветствую в игре города! Напиши \'Go\', если хочешь, чтоб мы начали. В любое время напиши /stop и мы закончим игру")
+    return 1
+
+
+def sure(update, context):
+    ans = update.message.text
+    if ans.lower().capitalize() == "Go":
+        temp = list(city_data.keys())
+        temp = random.choice(temp)
+        temp = city_data[temp]
+        word = random.choice(temp)
+        used_cities.append(word)
+        update.message.reply_text(f'Отлично. Я начну. Мой город: {word}')
+        return 2
+    update.message.reply_text('Не понял тебя. Повтори, пожалуйста.')
+    return 1
+
+
+def goroda_player_turn(update, context):
+    word = update.message.text
+    print(word)
+    word = word.lower().capitalize().replace('ё', 'e')
+    try:
+        first_key = city_data[word[0].upper()]
+        if word not in first_key:
+            raise KeyError
+        if not(used_cities[-1][-1] == word[0].lower() or
+                used_cities[-1][-2] == word[0].lower() and used_cities[-1][-1].lower() in 'ъыь'):
+            raise KeyError
+        used_cities.append(word)
+        print(used_cities)
+        word = goroda_computer_turn()
+        update.message.reply_text(f'Принято! Мой город: {word}')
+        return 2
+    except KeyError:
+        update.message.reply_text('Город не совпадает с буквой либо я его не припомню в своей памяти... А ну давай что-нибудь другое!')
+        return 2
+
+
+def goroda_computer_turn():
+    next_key = used_cities[-1][-1].capitalize()
+    if next_key in 'ЪЫЬ':
+        next_key = used_cities[-1][-2].capitalize()
+    word = random.choice(city_data[next_key])
+    while word in used_cities:
+        print(' застрял')
+        word = random.choice(city_data[next_key])
+    used_cities.append(word)
+    return word
+
+
+def stop(update, context):
+    update.message.reply_text("Принято! Интересно поиграли!")
+    used_cities.clear()
+    return ConversationHandler.END
 
 
 def main():
@@ -32,7 +87,23 @@ def main():
     # Получаем из него диспетчер сообщений.
     dp = updater.dispatcher
 
-    dp.add_handler(CommandHandler("goroda", goroda))
+    conv_handler = ConversationHandler(
+        # Точка входа в диалог.
+        entry_points=[CommandHandler('goroda', start_goroda)],
+
+        # Состояние внутри диалога.
+        # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
+        states={
+            # Функция читает ответ на первый вопрос и задаёт второй.
+            1: [MessageHandler(Filters.text & ~Filters.command, sure)],
+            2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
+        },
+
+        # Точка прерывания диалога. В данном случае — команда /stop.
+        fallbacks=[CommandHandler('stop', stop)]
+    )
+
+    dp.add_handler(conv_handler)
     # Запускаем цикл приема и обработки сообщений.
     updater.start_polling()
 
