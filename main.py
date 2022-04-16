@@ -1,28 +1,40 @@
-# Импортируем необходимые классы.
 # САМ БОТ ЗДЕСЬ: http://t.me/YLWordBot
-import logging
+import logging  # Импортируем необходимые классы.
 import json
 import random
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler,ConversationHandler
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
+from telegram import ReplyKeyboardMarkup
 
-# Запускаем логгирование
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
-)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)  # Запускаем логгирование
 
 logger = logging.getLogger(__name__)
 
 TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 
-# Городов всего: 10969
-with open('sorted_cities.json', encoding="utf-8") as city_file:
+with open('sorted_cities.json', encoding="utf-8") as city_file:  # Городов всего: 10969
     city_data = json.load(city_file)
 
 used_cities = []
 
 
+def start(update, context):  # приветствие пользователя
+    user_name = update.message.chat.first_name
+    update.message.reply_text(f"Привет, {user_name} 😊")
+    reply_keyboard = [['/skills']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text("Меня зовут Словесный бот", reply_markup=markup)
+
+
+def skills(update, context):
+    update.message.reply_text(
+        "Здесь будет написано, что бот умеет делать и всякие подсказки")
+
+
 def start_goroda(update, context):
-    update.message.reply_text("Приветствую в игре города! Напиши \'Go\', если хочешь, чтоб мы начали. В любое время напиши /stop и мы закончим игру")
+    update.message.reply_text(
+        "Приветствую в игре города! Напиши \'Go\', если хочешь, "
+        "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
     return 1
 
 
@@ -56,7 +68,7 @@ def goroda_player_turn(update, context):
             print(word)
             print(first_key_words)
             raise KeyError
-        if not(used_cities[-1][-1] == word[0].lower() or
+        if not (used_cities[-1][-1] == word[0].lower() or
                 used_cities[-1][-2] == word[0].lower() and used_cities[-1][-1].lower() in 'ъыь'):
             update.message.reply_text('Не совпадает с буквой')
             raise KeyError
@@ -88,17 +100,13 @@ def stop(update, context):
 
 
 def main():
-    # Создаём объект updater.
-    # Вместо слова "TOKEN" надо разместить полученный от @BotFather токен
-    updater = Updater(TOKEN)
+    updater = Updater(
+        TOKEN)  # Создаём объект updater. # Вместо слова "TOKEN" надо разместить полученный от @BotFather токен
 
-    # Получаем из него диспетчер сообщений.
-    dp = updater.dispatcher
+    dp = updater.dispatcher  # Получаем из него диспетчер сообщений.
 
     conv_handler = ConversationHandler(
-        # Точка входа в диалог.
-        entry_points=[CommandHandler('goroda', start_goroda)],
-
+        entry_points=[CommandHandler('goroda', start_goroda)],  # Точка входа в диалог.
         # Состояние внутри диалога.
         # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
         states={
@@ -106,20 +114,16 @@ def main():
             1: [MessageHandler(Filters.text & ~Filters.command, sure)],
             2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
         },
-
-        # Точка прерывания диалога. В данном случае — команда /stop.
-        fallbacks=[CommandHandler('stop', stop)]
+        fallbacks=[CommandHandler('stop', stop)]  # Точка прерывания диалога. В данном случае — команда /stop.
     )
 
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("skills", skills))
     dp.add_handler(conv_handler)
-    # Запускаем цикл приема и обработки сообщений.
-    updater.start_polling()
 
-    # Ждём завершения приложения.
-    # (например, получения сигнала SIG_TERM при нажатии клавиш Ctrl+C)
-    updater.idle()
+    updater.start_polling()  # Запускаем цикл приема и обработки сообщений.
+    updater.idle()  # Ждём завершения приложения. # (например, получения сигнала SIG_TERM при нажатии клавиш Ctrl+C)
 
 
-# Запускаем функцию main() в случае запуска скрипта.
-if __name__ == '__main__':
+if __name__ == '__main__':  # Запускаем функцию main() в случае запуска скрипта.
     main()

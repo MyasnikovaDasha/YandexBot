@@ -1,5 +1,5 @@
-# Программа для сортировки словаря по алфавиту.
-import json
+import json  # Программа для сортировки словаря по алфавиту.
+
 with open('cities.json', encoding="utf-8") as city_file:
     city_data = json.load(city_file)
 cities = []
