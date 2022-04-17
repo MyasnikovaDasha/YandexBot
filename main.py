@@ -27,8 +27,27 @@ def start(update, context):  # приветствие пользователя
 
 
 def skills(update, context):
+    reply_keyboard = [['/play', '/clear']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру", "✅ /clear - удалить все сообщения"])
+    update.message.reply_text(text, reply_markup=markup)
+
+
+def play(update, context):
+    reply_keyboard = [['/goroda', '/balabolka'], ['/quiz']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('В какую игру ты хочешь сыграть?', reply_markup=markup)
+
+
+def clear(update, context): # ВАНЯ
+    pass
+
+
+def start_balabolka(update, context):
     update.message.reply_text(
-        "Здесь будет написано, что бот умеет делать и всякие подсказки")
+        "Приветствую в игре балаболка! Напиши \'Go\', если хочешь, "
+        "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
+    return 1
 
 
 def start_goroda(update, context):
@@ -93,7 +112,7 @@ def goroda_computer_turn():
     return word
 
 
-def stop(update, context):
+def stop_goroda(update, context):
     update.message.reply_text("Принято! Интересно поиграли!")
     used_cities.clear()
     return ConversationHandler.END
@@ -105,7 +124,7 @@ def main():
 
     dp = updater.dispatcher  # Получаем из него диспетчер сообщений.
 
-    conv_handler = ConversationHandler(
+    conv_handler_goroda = ConversationHandler(
         entry_points=[CommandHandler('goroda', start_goroda)],  # Точка входа в диалог.
         # Состояние внутри диалога.
         # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
@@ -114,12 +133,27 @@ def main():
             1: [MessageHandler(Filters.text & ~Filters.command, sure)],
             2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
         },
-        fallbacks=[CommandHandler('stop', stop)]  # Точка прерывания диалога. В данном случае — команда /stop.
+        fallbacks=[CommandHandler('stop', stop_goroda)]  # Точка прерывания диалога. В данном случае — команда /stop.
+    )
+
+    conv_handler_balabolka = ConversationHandler(
+        entry_points=[CommandHandler('balabolka', start_balabolka)],  # Точка входа в диалог.
+        # Состояние внутри диалога.
+        # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
+        states={
+            # Функция читает ответ на первый вопрос и задаёт второй.
+            1: [MessageHandler(Filters.text & ~Filters.command, sure)],
+            2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
+        },
+        fallbacks=[CommandHandler('stop', stop_goroda)]  # Точка прерывания диалога. В данном случае — команда /stop.
     )
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("skills", skills))
-    dp.add_handler(conv_handler)
+    dp.add_handler(CommandHandler("play", play))
+    dp.add_handler(CommandHandler("clear", clear))
+    dp.add_handler(conv_handler_goroda)
+    dp.add_handler(conv_handler_balabolka)
 
     updater.start_polling()  # Запускаем цикл приема и обработки сообщений.
     updater.idle()  # Ждём завершения приложения. # (например, получения сигнала SIG_TERM при нажатии клавиш Ctrl+C)
