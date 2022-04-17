@@ -15,8 +15,11 @@ TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 with open('sorted_cities.json', encoding="utf-8") as city_file:  # Городов всего: 10969
     city_data = json.load(city_file)
 
+# Переменные для работы игры "Города"
 used_cities = []
-
+phrases = ["Принято!", "Слышал что-то знакомое...", "Записал!", "Так значит? Ну держись тогда!", "Прекрасное местечко!",
+           "Я бы хотел там оказаться...", "Ни за что туда не отправлюсь.", "Такой себе город, я бы там не жил.", "Засчитываю!",
+           "И такой город бывает?", "Чего только люди не придумают..."]
 
 def start(update, context):  # приветствие пользователя
     user_name = update.message.chat.first_name
@@ -42,12 +45,28 @@ def play(update, context):
 def clear(update, context): # ВАНЯ
     pass
 
+#---НАЧАЛО КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ---
+
 
 def start_balabolka(update, context):
     update.message.reply_text(
         "Приветствую в игре балаболка! Напиши \'Go\', если хочешь, "
         "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
     return 1
+
+
+def sure_balabolka(update, context):
+    ans = update.message.text
+    if ans.lower().capitalize() == "Go":
+        print("Отлично! Начни печатать какое-либо предложение, и я на него сгенерирую текст. Затем ты продолжаешь и т.д.")
+        return 2
+    update.message.reply_text('Не понял тебя. Повтори, пожалуйста.')
+    return 1
+
+
+def balabolka_computer_turn(update, context):
+    text = update.message.text
+    pass
 
 
 def start_goroda(update, context):
@@ -57,7 +76,7 @@ def start_goroda(update, context):
     return 1
 
 
-def sure(update, context):
+def sure_goroda(update, context):
     ans = update.message.text
     if ans.lower().capitalize() == "Go":
         temp = list(city_data.keys())
@@ -75,28 +94,31 @@ def goroda_player_turn(update, context):
     word = update.message.text
     word = ' '.join([i.lower().capitalize() for i in word.split()])
     word = '-'.join([i.lower().capitalize() for i in word.split('-')])
+    word.replace("-На-", "-на-")
+    word.replace("-Он-", '-он-')
     word = word.replace('ё', 'e')
     word = word.replace('Ё', 'Е')
     try:
         first_key_words = city_data[word[0].upper()]
         if word in used_cities:
             update.message.reply_text(f'Город {word} уже упоминался. Давай ещё раз и не повторяйся!')
-            raise KeyError
+            return 2
         if word not in first_key_words:
             update.message.reply_text('Нет в словаре')
             print(word)
             print(first_key_words)
-            raise KeyError
+            return 2
         if not (used_cities[-1][-1] == word[0].lower() or
                 used_cities[-1][-2] == word[0].lower() and used_cities[-1][-1].lower() in 'ъыь'):
             update.message.reply_text('Не совпадает с буквой')
-            raise KeyError
+            return 2
         used_cities.append(word)
         print(used_cities)
         word = goroda_computer_turn()
-        update.message.reply_text(f'Принято! Мой город: {word}')
+        update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}')
         return 2
     except KeyError:
+        print("Такого города ЯВНО не существует")
         return 2
 
 
@@ -117,6 +139,8 @@ def stop_goroda(update, context):
     used_cities.clear()
     return ConversationHandler.END
 
+#--- КОНЕЦ КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ ---
+
 
 def main():
     updater = Updater(
@@ -130,7 +154,7 @@ def main():
         # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
         states={
             # Функция читает ответ на первый вопрос и задаёт второй.
-            1: [MessageHandler(Filters.text & ~Filters.command, sure)],
+            1: [MessageHandler(Filters.text & ~Filters.command, sure_goroda)],
             2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
         },
         fallbacks=[CommandHandler('stop', stop_goroda)]  # Точка прерывания диалога. В данном случае — команда /stop.
@@ -142,8 +166,8 @@ def main():
         # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
         states={
             # Функция читает ответ на первый вопрос и задаёт второй.
-            1: [MessageHandler(Filters.text & ~Filters.command, sure)],
-            2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
+            1: [MessageHandler(Filters.text & ~Filters.command, sure_balabolka)],
+            2: [MessageHandler(Filters.text & ~Filters.command, balabolka_computer_turn)],
         },
         fallbacks=[CommandHandler('stop', stop_goroda)]  # Точка прерывания диалога. В данном случае — команда /stop.
     )
