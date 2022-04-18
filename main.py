@@ -15,11 +15,28 @@ TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 with open('sorted_cities.json', encoding="utf-8") as city_file:  # Городов всего: 10969
     city_data = json.load(city_file)
 
-# Переменные для работы игры "Города"
-used_cities = []
+used_cities = []  # Переменные для работы игры "Города"
 phrases = ["Принято!", "Слышал что-то знакомое...", "Записал!", "Так значит? Ну держись тогда!", "Прекрасное местечко!",
-           "Я бы хотел там оказаться...", "Ни за что туда не отправлюсь.", "Такой себе город, я бы там не жил.", "Засчитываю!",
+           "Я бы хотел там оказаться...", "Ни за что туда не отправлюсь.", "Такой себе город, я бы там не жил.",
+           "Засчитываю!",
            "И такой город бывает?", "Чего только люди не придумают..."]
+
+music_list_classic = [
+    ['Мелодия1.mp3', '/Bach', 'Toccata and Fugue in D minor', '/Glinka', '/Schubert', '/Chajjkovskijj'],
+    ['Мелодия2.mp3', '/Betkhoven', 'lunnaja-sonata', '/Chopin', '/Vivaldi', '/Bach'],
+    ['Мелодия3.mp3', '/Grig', 'per-gjunt-v-peshhere-gornogo-korolja', '/Mocart', '/Bach', '/Glinka'],
+    ['Мелодия4.mp3', '/Glinka', 'Marsh_Chernomora', '/Vivaldi', '/Schubert', '/Chajjkovskijj'],
+    ['Мелодия5.mp3', '/Mocart', 'zhenitba-figaro', '/Chajjkovskijj', '/Bach', '/Chopin'],
+    ['Мелодия6.mp3', '/Mocart', 'Piano Sonata 11 A', '/Chopin', '/Betkhoven', '/Grig'],
+    ['Мелодия7.mp3', '/Chajjkovskijj', 'shhelkunchik-vals-cvetov', 'Mocart', '/Bach', '/Glinka'],
+    ['Мелодия8.mp3', '/Chajjkovskijj', 'Tanec_malenkikh_lebedejj_iz_baleta_Lebedinoe_ozero',
+     '/Vivaldi', '/Schubert', '/Bach'],
+    ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart', '/Grig']]
+music_list_classic_new = music_list_classic
+ans_music = ''
+nomer = 0
+points = 0
+
 
 def start(update, context):  # приветствие пользователя
     user_name = update.message.chat.first_name
@@ -42,13 +59,160 @@ def play(update, context):
     update.message.reply_text('В какую игру ты хочешь сыграть?', reply_markup=markup)
 
 
-def clear(update, context): # ВАНЯ
+def clear(update, context):  # ---Правила игры---
     pass
 
-#---НАЧАЛО КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ---
+
+def quiz(update, context):  # игра - викторина
+    reply_keyboard = [['/история', '/логика'], ['/картинки', '/music']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('В какую викторину вы хотите сыграть?', reply_markup=markup)
 
 
-def start_balabolka(update, context):
+def music(update, context):  # викторина, музыка
+    global music_list_classic_new, nomer, points
+    nomer = 0
+    points = 0
+    random.shuffle(music_list_classic, random.random)
+    music_list_classic_new = music_list_classic
+    reply_keyboard = [['/contemporary', '/classic']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('Выберите тему', reply_markup=markup)
+
+
+def classic(update, context):  # викторина, музыка
+    global ans_music, nomer
+    if nomer != 9:
+        options = [music_list_classic_new[nomer][1], music_list_classic_new[nomer][-1],
+                   music_list_classic_new[nomer][-2], music_list_classic_new[nomer][-3]]
+        ans_music = options[0][::]
+        random.shuffle(options, random.random)
+        reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
+        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        chat_id = update.message.chat.id
+        meleodia = music_list_classic_new[nomer][0]
+        nomer += 1
+        context.bot.send_audio(chat_id=chat_id, audio=open(meleodia, 'rb'))
+        update.message.reply_text('Выберите композитора', reply_markup=markup)
+    else:
+        text = 'Ваш результат: ' + str(points) + ' из 9'
+        update.message.reply_text(text)
+
+
+def bach(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Bach':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def glinka(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Glinka':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def schubert(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Schubert':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def chajjkovskijj(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Chajjkovskijj':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def betkhoven(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Betkhoven':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def chopin(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Chopin':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def vivaldi(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Vivaldi':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def grig(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Grig':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def mocart(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music == '/Mocart':
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
+
+
+def call_back(update, context):
+    chat_id = update.message.chat.id
+    context.bot.send_photo(chat_id=chat_id, photo=open('Картинка.jpg', 'rb'))
+
+
+def start_balabolka(update, context):  # ---НАЧАЛО КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ---
     update.message.reply_text(
         "Приветствую в игре балаболка! Напиши \'Go\', если хочешь, "
         "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
@@ -58,7 +222,8 @@ def start_balabolka(update, context):
 def sure_balabolka(update, context):
     ans = update.message.text
     if ans.lower().capitalize() == "Go":
-        print("Отлично! Начни печатать какое-либо предложение, и я на него сгенерирую текст. Затем ты продолжаешь и т.д.")
+        print(
+            "Отлично! Начни печатать какое-либо предложение, и я на него сгенерирую текст. Затем ты продолжаешь и т.д.")
         return 2
     update.message.reply_text('Не понял тебя. Повтори, пожалуйста.')
     return 1
@@ -137,9 +302,7 @@ def goroda_computer_turn():
 def stop_goroda(update, context):
     update.message.reply_text("Принято! Интересно поиграли!")
     used_cities.clear()
-    return ConversationHandler.END
-
-#--- КОНЕЦ КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ ---
+    return ConversationHandler.END  # --- КОНЕЦ КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ ---
 
 
 def main():
@@ -176,6 +339,20 @@ def main():
     dp.add_handler(CommandHandler("skills", skills))
     dp.add_handler(CommandHandler("play", play))
     dp.add_handler(CommandHandler("clear", clear))
+    dp.add_handler(CommandHandler("quiz", quiz))
+    dp.add_handler(CommandHandler("music", music))
+    dp.add_handler(CommandHandler("classic", classic))
+    dp.add_handler(CommandHandler("next", classic))
+    dp.add_handler(CommandHandler("Bach", bach))
+    dp.add_handler(CommandHandler("Glinka", glinka))
+    dp.add_handler(CommandHandler("Schubert", schubert))
+    dp.add_handler(CommandHandler("Chajjkovskijj", chajjkovskijj))
+    dp.add_handler(CommandHandler("Betkhoven", betkhoven))
+    dp.add_handler(CommandHandler("Chopin", chopin))
+    dp.add_handler(CommandHandler("Vivaldi", vivaldi))
+    dp.add_handler(CommandHandler("Grig", grig))
+    dp.add_handler(CommandHandler("Mocart", mocart))
+
     dp.add_handler(conv_handler_goroda)
     dp.add_handler(conv_handler_balabolka)
 
