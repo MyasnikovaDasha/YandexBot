@@ -28,7 +28,7 @@ music_list_classic = [
     ['Мелодия4.mp3', '/Glinka', 'Marsh_Chernomora', '/Vivaldi', '/Schubert', '/Chajjkovskijj'],
     ['Мелодия5.mp3', '/Mocart', 'zhenitba-figaro', '/Chajjkovskijj', '/Bach', '/Chopin'],
     ['Мелодия6.mp3', '/Mocart', 'Piano Sonata 11 A', '/Chopin', '/Betkhoven', '/Grig'],
-    ['Мелодия7.mp3', '/Chajjkovskijj', 'shhelkunchik-vals-cvetov', 'Mocart', '/Bach', '/Glinka'],
+    ['Мелодия7.mp3', '/Chajjkovskijj', 'shhelkunchik-vals-cvetov', '/Mocart', '/Bach', '/Glinka'],
     ['Мелодия8.mp3', '/Chajjkovskijj', 'Tanec_malenkikh_lebedejj_iz_baleta_Lebedinoe_ozero',
      '/Vivaldi', '/Schubert', '/Bach'],
     ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart', '/Grig']]
