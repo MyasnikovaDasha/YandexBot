@@ -32,7 +32,20 @@ music_list_classic = [
     ['Мелодия8.mp3', '/Chajjkovskijj', 'Tanec_malenkikh_lebedejj_iz_baleta_Lebedinoe_ozero',
      '/Vivaldi', '/Schubert', '/Bach'],
     ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart', '/Grig']]
+music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor Creed', '/Slava_Marlow', '/Timati'],
+                           ['Песня2.mp3', '/Alex_Ataman', '/Feduk', '/Morgenshtern', '/Mucca'],
+                           ['Песня3.mp3', '/Jony', '/Egor Creed', '/Feduk', 'Danya_Milokhin'],
+                           ['Песня4.mp3', '/Klava_Koka', '/Mia_Boyko', '/Dora', '/Polina_Gagarina'],
+                           ['Песня5.mp3', '/Femlove', '/King_and_the_Clown', '/Mucca', 'Danya_Milokhin'],
+                           ['Песня6.mp3', '/Artur_Pirozhkov', '/Khabib', '/Morgenshtern', '/Eldar_Dzharakhov'],
+                           ['Песня7.mp3', '/Dabro', '/Egor Creed', '/Eldar_Dzharakhov', '/Danya_Milokhin'],
+                           ['Песня8.mp3', '/Billie_Eilish', '/Ariana_Grande', '/Selena_Gomez', '/Taylor_Swift'],
+                           ['Песня9.mp3', '/BTS', '/EXO', '/XXXTENTACION', '/Kanye_West'],
+                           ['Песня10.mp3', '/DEAD_BLONDE', '/Mia_Boyko', '/Maby_Baby', '/Alena_Shvets'],
+                           ['Песня11.mp3', '/Nervy', '/King_and_the_Clown', '/friend_zone', '/Timati'],
+                           ['Песня12.mp3', '/Gayazovsя_Brothers', '/friend_zone', '/Khabib', '/Slava_Marlow']]
 music_list_classic_new = music_list_classic
+music_list_contemporary_new = music_list_contemporary
 ans_music = ''
 nomer = 0
 points = 0
@@ -47,9 +60,9 @@ def start(update, context):  # приветствие пользователя
 
 
 def skills(update, context):
-    reply_keyboard = [['/play', '/clear']]  # кнопка
+    reply_keyboard = [['/play', '/rules']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру", "✅ /clear - удалить все сообщения"])
+    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру", "✅ /rules - правила игры"])
     update.message.reply_text(text, reply_markup=markup)
 
 
@@ -60,7 +73,7 @@ def play(update, context):
 
 
 def rules(update, context):  # ---Правила игры---
-    reply_keyboard = [['/play',]]  # кнопка
+    reply_keyboard = [['/play', ]]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру",
                       "✅ /rules - правила игры"])
@@ -74,11 +87,13 @@ def quiz(update, context):  # игра - викторина
 
 
 def music(update, context):  # викторина, музыка
-    global music_list_classic_new, nomer, points
+    global music_list_classic_new, nomer, points, music_list_contemporary_new
     nomer = 0
     points = 0
     random.shuffle(music_list_classic, random.random)
     music_list_classic_new = music_list_classic
+    random.shuffle(music_list_contemporary, random.random)
+    music_list_contemporary_new = music_list_contemporary
     reply_keyboard = [['/contemporary', '/classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('Выберите тему', reply_markup=markup)
@@ -101,6 +116,39 @@ def classic(update, context):  # викторина, музыка
     else:
         text = 'Ваш результат: ' + str(points) + ' из 9'
         update.message.reply_text(text)
+
+
+def contemporary(update, context):  # викторина, музыка
+    global ans_music, nomer
+    if nomer != 5:
+        options = [music_list_contemporary_new[nomer][1], music_list_contemporary_new[nomer][-1],
+                   music_list_contemporary_new[nomer][-2], music_list_contemporary_new[nomer][-3]]
+        ans_music = options[0][::]
+        random.shuffle(options, random.random)
+        reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
+        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        chat_id = update.message.chat.id
+        meleodia = music_list_contemporary_new[nomer][0]
+        nomer += 1
+        context.bot.send_audio(chat_id=chat_id, audio=open(meleodia, 'rb'))
+        update.message.reply_text('Выберите исполнителя', reply_markup=markup)
+    else:
+        text = 'Ваш результат: ' + str(points) + ' из 5'
+        update.message.reply_text(text)
+
+
+def music_check(update, context):
+    global points
+    reply_keyboard = [['/next']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    if ans_music in ['/Konfuz', '/Alex_Ataman', '/Jony', '/Klava_Koka',
+                     '/Femlove', '/Artur_Pirozhkov', '/Billie_Eilish',
+                     '/DEAD_BLONDE', '/Nervy', '/Gayazovsя_Brothers', '/BTS']:
+        update.message.reply_text('Правильно', reply_markup=markup)
+        points += 1
+    else:
+        text = 'Правильный ответ: ' + ans_music[1:]
+        update.message.reply_text(text, reply_markup=markup)
 
 
 def bach(update, context):
@@ -216,7 +264,6 @@ def call_back(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=open('Картинка.jpg', 'rb'))
 
 
-
 def start_goroda(update, context):
     update.message.reply_text(
         "Приветствую в игре города! Напиши \'Go\', если хочешь, "
@@ -309,7 +356,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("skills", skills))
     dp.add_handler(CommandHandler("play", play))
-    dp.add_handler(CommandHandler("clear", clear))
+    dp.add_handler(CommandHandler("rules", rules))
     dp.add_handler(CommandHandler("quiz", quiz))
     dp.add_handler(CommandHandler("music", music))
     dp.add_handler(CommandHandler("classic", classic))
@@ -323,6 +370,39 @@ def main():
     dp.add_handler(CommandHandler("Vivaldi", vivaldi))
     dp.add_handler(CommandHandler("Grig", grig))
     dp.add_handler(CommandHandler("Mocart", mocart))
+    dp.add_handler(CommandHandler("contemporary", contemporary))
+    dp.add_handler(CommandHandler("Konfuz", music_check))
+    dp.add_handler(CommandHandler("Alex_Ataman", music_check))
+    dp.add_handler(CommandHandler("Jony", music_check))
+    dp.add_handler(CommandHandler("Klava_Koka", music_check))
+    dp.add_handler(CommandHandler("Femlove", music_check))
+    dp.add_handler(CommandHandler("Artur_Pirozhkov", music_check))
+    dp.add_handler(CommandHandler("Billie_Eilish", music_check))
+    dp.add_handler(CommandHandler("DEAD_BLONDE", music_check))
+    #dp.add_handler(CommandHandler("Gayazovsя_Brothers", music_check))
+    dp.add_handler(CommandHandler("BTS", music_check))
+    dp.add_handler(CommandHandler("Ariana_Grande", music_check))
+    dp.add_handler(CommandHandler("Mia_Boyko", music_check))
+    dp.add_handler(CommandHandler("Selena_Gomez", music_check))
+    dp.add_handler(CommandHandler("Taylor_Swift", music_check))
+    dp.add_handler(CommandHandler("Maby_Baby", music_check))
+    dp.add_handler(CommandHandler("Alena_Shvets", music_check))
+    dp.add_handler(CommandHandler("Dora", music_check))
+    dp.add_handler(CommandHandler("Polina_Gagarina", music_check))
+    dp.add_handler(CommandHandler("Egor_Creed", music_check))
+    dp.add_handler(CommandHandler("King_and_the_Clown", music_check))
+    dp.add_handler(CommandHandler("EXO", music_check))
+    dp.add_handler(CommandHandler("XXXTENTACION", music_check))
+    dp.add_handler(CommandHandler("Kanye_West", music_check))
+    dp.add_handler(CommandHandler("friend_zone", music_check))
+    dp.add_handler(CommandHandler("Feduk", music_check))
+    dp.add_handler(CommandHandler("Slava_Marlow", music_check))
+    dp.add_handler(CommandHandler("Khabib", music_check))
+    dp.add_handler(CommandHandler("Timati", music_check))
+    dp.add_handler(CommandHandler("Mucca", music_check))
+    dp.add_handler(CommandHandler("Eldar_Dzharakhov", music_check))
+    dp.add_handler(CommandHandler("Morgenshtern", music_check))
+    dp.add_handler(CommandHandler("Danya_Milokhin", music_check))
 
     dp.add_handler(conv_handler_goroda)
 
