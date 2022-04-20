@@ -56,7 +56,28 @@ art_list = [['Картина1.jpg', '/DIEGO_VELAZQUEZ', '/SANDRO_BOTTICELLI', '/
             ['Картина7.jpg', '/BANKSY', '/SANDRO_BOTTICELLI', '/KAZIMIR_MALEVICH', '/JEROME_BOSCH'],
             ['Картина8.jpg', '/LEONARDO_DA_VINCI', '/RAFAEL_SANTI', '/JACKSON_POLLOCK', '/EUGENE_DELACROIX'],
             ['Картина9.jpg', '/CLAUDE_MONET', '/PABLO_PICASSO', '/KAZIMIR_MALEVICH',
-             '/EUGENE_DELACROIX'], ]  # список картин для игры в викторину искусство
+             '/EUGENE_DELACROIX']]  # список картин для игры в викторину искусство
+
+films_list = [['Фильм1.jpg', '/Krik', '/Pyatnitsa_13-ye', '/Krovavoye_leto' , '/YA_znayu_chto_vy_sdelali_proshlym_letom'],
+              ['Фильм2.jpg', '/Tachki', '/Gonka:Pushechnoye_yadro', '/Avtomobili' , '/Beregis_avtomobilya'],
+              ['Фильм3.jpg', '/Kavkazskaya_plennitsa_ili_Novyye_priklyucheniya_Shurika', '/Ironiya_Sudby_ili_s_logkim_parom', '/Afonya' , '/Dozhivem_do_ponedelnika'],
+              ['Фильм4.jpg', '/Sudya_Dredd', '/Razrushitel', '/Kobra' , '/Politseyskiy_bespredel'],
+              ['Фильм5.jpg', '/Titanik', '/1912', '/Kapitan_Kryuk' , '/Romeo_Dzhulyetta'],
+              ['Фильм6.jpg', '/', '/', '/' , '/'],
+              ['Фильм7.jpg', '/', '/', '/' , '/'],
+              ['Фильм8.jpg', '/', '/', '/' , '/'],
+              ['Фильм9.jpg', '/', '/', '/' , '/'],
+              ['Фильм10.jpg', '/', '/', '/' , '/'],
+              ['Фильм11.jpg', '/', '/', '/' , '/'],
+              ['Фильм12.jpg', '/', '/', '/' , '/'],
+              ['Фильм13.jpg', '/', '/', '/' , '/'],
+              ['Фильм14.jpg', '/', '/', '/' , '/'],
+              ['Фильм15.jpg', '/', '/', '/' , '/'],
+              ['Фильм16.jpg', '/', '/', '/' , '/'],
+              ['Фильм17.jpg', '/', '/', '/' , '/'],
+              ['Фильм18.jpg', '/', '/', '/' , '/'],
+              ['Фильм19.jpg', '/', '/', '/' , '/'],
+              ['Фильм20.jpg', '/', '/', '/' , '/']] # список картин для игры в викторину фильмы
 
 music_list_classic_new = music_list_classic  # для игры в викторину: музыка
 music_list_contemporary_new = music_list_contemporary
@@ -493,6 +514,73 @@ def main():
     dp.add_handler(CommandHandler("JACKSON_POLLOCK", paintings_check_mistake))
     dp.add_handler(CommandHandler("EUGENE_DELACROIX", paintings_check_mistake))
     dp.add_handler(CommandHandler("JEROME_BOSCH", paintings_check_mistake))
+
+    dp.add_handler(CommandHandler("Krik", logics_check_right))
+    dp.add_handler(CommandHandler("Tachki", logics_check_right))
+    dp.add_handler(CommandHandler("Kavkazskaya_plennitsa_ili_Novyye_priklyucheniya_Shurika", logics_check_right))
+    dp.add_handler(CommandHandler("Dozhivem_do_ponedelnika", logics_check_right))
+    dp.add_handler(CommandHandler("Titanik", logics_check_right))
+    dp.add_handler(CommandHandler("Sudya_Dredd", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+
+    dp.add_handler(CommandHandler("Pyatnitsa_13-ye", logics_check_mistake))
+    dp.add_handler(CommandHandler("Krovavoye_leto", logics_check_mistake))
+    dp.add_handler(CommandHandler("YA_znayu_chto_vy_sdelali_proshlym_letom", logics_check_mistake))
+    dp.add_handler(CommandHandler("Gonka:Pushechnoye_yadro", logics_check_mistake))
+    dp.add_handler(CommandHandler("Avtomobili", logics_check_mistake))
+    dp.add_handler(CommandHandler("Beregis_avtomobilya", logics_check_mistake))
+    dp.add_handler(CommandHandler("Ironiya_Sudby_ili_s_logkim_parom", logics_check_mistake))
+    dp.add_handler(CommandHandler("Afonya", logics_check_mistake))
+    dp.add_handler(CommandHandler("Kobra", logics_check_mistake))
+    dp.add_handler(CommandHandler("Razrushitel", logics_check_mistake))
+    dp.add_handler(CommandHandler("Politseyskiy_bespredel", logics_check_mistake))
+    dp.add_handler(CommandHandler("1912", logics_check_mistake))
+    dp.add_handler(CommandHandler("Kapitan_Kryuk", logics_check_mistake))
+    dp.add_handler(CommandHandler("Romeo_Dzhulyetta", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
 
     dp.add_handler(conv_handler_goroda)
 
