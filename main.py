@@ -31,7 +31,9 @@ music_list_classic = [
     ['Мелодия7.mp3', '/Chajjkovskijj', 'shhelkunchik-vals-cvetov', '/Mocart', '/Bach', '/Glinka'],
     ['Мелодия8.mp3', '/Chajjkovskijj', 'Tanec_malenkikh_lebedejj_iz_baleta_Lebedinoe_ozero',
      '/Vivaldi', '/Schubert', '/Bach'],
-    ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart', '/Grig']]
+    ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart',
+     '/Grig']]  # список мелодий для игры в викторину: музыка, классика
+
 music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor_Creed', '/Slava_Marlow', '/Timati'],
                            ['Песня2.mp3', '/Alex_Ataman', '/Feduk', '/Morgenshtern', '/Mucca'],
                            ['Песня3.mp3', '/Jony', '/Egor_Creed', '/Feduk', '/Danya_Milokhin'],
@@ -42,10 +44,27 @@ music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor_Creed', '/Slava
                            ['Песня8.mp3', '/Billie_Eilish', '/Ariana_Grande', '/Selena_Gomez', '/Taylor_Swift'],
                            ['Песня9.mp3', '/BTS', '/EXO', '/XXXTENTACION', '/Kanye_West'],
                            ['Песня10.mp3', '/DEAD_BLONDE', '/Mia_Boyko', '/Maby_Baby', '/Alena_Shvets'],
-                           ['Песня11.mp3', '/Nervy', '/King_and_the_Clown', '/friend_zone', '/Timati']]
-music_list_classic_new = music_list_classic
+                           ['Песня11.mp3', '/Nervy', '/King_and_the_Clown', '/friend_zone',
+                            '/Timati']]  # список мелодий для игры в викторину: музыка, современная
+
+art_list = [['Картина1.jpg', '/DIEGO_VELAZQUEZ', '/SANDRO_BOTTICELLI', '/PABLO_PICASSO', '/RAFAEL_SANTI'],
+            ['Картина2.jpg', '/VINCENT_VAN_GOGH', '/PABLO_PICASSO', '/MICHELANGELO_CARAVAGGIO', '/EUGENE_DELACROIX'],
+            ['Картина3.jpg', '/EDWARD_MUNK', '/SANDRO_BOTTICELLI', '/MICHELANGELO_CARAVAGGIO', '/JACKSON_POLLOCK'],
+            ['Картина4.jpg', '/SALVADOR_DALI', '/PABLO_PICASSO', '/JACKSON_POLLOCK', '/JEROME_BOSCH'],
+            ['Картина5.jpg', '/OREST_KIPRENSKY', '/SANDRO_BOTTICELLI', '/KAZIMIR_MALEVICH', '/JEROME_BOSCH'],
+            ['Картина6.jpg', '/REMBRANDT_VAN_RHINE', '/RAFAEL_SANTI', '/MICHELANGELO_CARAVAGGIO', '/JEROME_BOSCH'],
+            ['Картина7.jpg', '/BANKSY', '/SANDRO_BOTTICELLI', '/KAZIMIR_MALEVICH', '/JEROME_BOSCH'],
+            ['Картина8.jpg', '/LEONARDO_DA_VINCI', '/RAFAEL_SANTI', '/JACKSON_POLLOCK', '/EUGENE_DELACROIX'],
+            ['Картина9.jpg', '/CLAUDE_MONET', '/PABLO_PICASSO', '/KAZIMIR_MALEVICH',
+             '/EUGENE_DELACROIX'], ]  # список картин для игры в викторину искусство
+
+music_list_classic_new = music_list_classic  # для игры в викторину: музыка
 music_list_contemporary_new = music_list_contemporary
 ans_music = ''
+
+art_list_new = art_list  # для игры в викторину: искусство
+ans_art = ''
+
 nomer = 0
 points = 0
 
@@ -58,20 +77,20 @@ def start(update, context):  # приветствие пользователя
     update.message.reply_text("Меня зовут Словесный бот", reply_markup=markup)
 
 
-def skills(update, context):
+def skills(update, context):  # навыки бота
     reply_keyboard = [['/play', '/rules']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру", "✅ /rules - правила игры"])
     update.message.reply_text(text, reply_markup=markup)
 
 
-def play(update, context):
-    reply_keyboard = [['/goroda', '/balabolka'], ['/quiz']]  # кнопка
+def play(update, context):  # выбор игры
+    reply_keyboard = [['/goroda', '/quiz']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('В какую игру ты хочешь сыграть?', reply_markup=markup)
 
 
-def rules(update, context):  # ---Правила игры---
+def rules(update, context):  # ---Правила игры--- # ИСПРАВИТЬ
     reply_keyboard = [['/play', ]]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру",
@@ -80,7 +99,7 @@ def rules(update, context):  # ---Правила игры---
 
 
 def quiz(update, context):  # игра - викторина
-    reply_keyboard = [['/история', '/логика'], ['/картинки', '/music']]  # кнопка
+    reply_keyboard = [['/история', '/логика'], ['/art', '/music']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('В какую викторину вы хотите сыграть?', reply_markup=markup)
 
@@ -145,6 +164,7 @@ def music_check_mistake(update, context):
     text = 'Правильный ответ: ' + ans_music[1:]
     update.message.reply_text(text, reply_markup=markup)
 
+
 def music_check_right(update, context):
     global points
     reply_keyboard = [['/next_contemporary']]  # кнопка
@@ -152,7 +172,54 @@ def music_check_right(update, context):
     update.message.reply_text('Правильно', reply_markup=markup)
     points += 1
 
-def bach(update, context):
+
+def art(update, context):  # викторина, музыка
+    global art_list, nomer, points, art_list_new
+    nomer = 0
+    points = 0
+    random.shuffle(art_list, random.random)
+    art_list_new = art_list
+    reply_keyboard = [['/next_art']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text(':)', reply_markup=markup)  # ИСПРАВИТЬ
+
+
+def next_art(update, context):  # викторина, музыка
+    global ans_art, nomer
+    if nomer != 5:
+        options = [art_list_new[nomer][1], art_list_new[nomer][-1],
+                   art_list_new[nomer][-2], art_list_new[nomer][-3]]
+        ans_art = options[0][::]
+        random.shuffle(options, random.random)
+        reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
+        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        chat_id = update.message.chat.id
+        picture = art_list_new[nomer][0]
+        nomer += 1
+        context.bot.send_photo(chat_id=chat_id, photo=open(picture, 'rb'))
+        update.message.reply_text('Выберите художника', reply_markup=markup)
+    else:
+        text = 'Ваш результат: ' + str(points) + ' из 5'
+        update.message.reply_text(text)
+
+
+def paintings_check_mistake(update, context):
+    global points
+    reply_keyboard = [['/next_art']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    text = 'Правильный ответ: ' + ans_art[1:]
+    update.message.reply_text(text, reply_markup=markup)
+
+
+def paintings_check_right(update, context):
+    global points
+    reply_keyboard = [['/next_art']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('Правильно', reply_markup=markup)
+    points += 1
+
+
+def bach(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -164,7 +231,7 @@ def bach(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def glinka(update, context):
+def glinka(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -176,7 +243,7 @@ def glinka(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def schubert(update, context):
+def schubert(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -188,7 +255,7 @@ def schubert(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def chajjkovskijj(update, context):
+def chajjkovskijj(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -200,7 +267,7 @@ def chajjkovskijj(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def betkhoven(update, context):
+def betkhoven(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -212,7 +279,7 @@ def betkhoven(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def chopin(update, context):
+def chopin(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -224,7 +291,7 @@ def chopin(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def vivaldi(update, context):
+def vivaldi(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -236,7 +303,7 @@ def vivaldi(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def grig(update, context):
+def grig(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -248,7 +315,7 @@ def grig(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def mocart(update, context):
+def mocart(update, context):  # Функции для викторины: музыка, классика
     global points
     reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -260,12 +327,7 @@ def mocart(update, context):
         update.message.reply_text(text, reply_markup=markup)
 
 
-def call_back(update, context):
-    chat_id = update.message.chat.id
-    context.bot.send_photo(chat_id=chat_id, photo=open('Картинка.jpg', 'rb'))
-
-
-def start_goroda(update, context):
+def start_goroda(update, context):  # игра - города
     update.message.reply_text(
         "Приветствую в игре города! Напиши \'Go\', если хочешь, "
         "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
@@ -333,7 +395,7 @@ def goroda_computer_turn():
 def stop_goroda(update, context):
     update.message.reply_text("Принято! Интересно поиграли!")
     used_cities.clear()
-    return ConversationHandler.END  # --- КОНЕЦ КОДА НАД КОТОРЫМ РАБОТАЕТ ВАНЯ ---
+    return ConversationHandler.END
 
 
 def main():
@@ -359,10 +421,15 @@ def main():
     dp.add_handler(CommandHandler("play", play))
     dp.add_handler(CommandHandler("rules", rules))
     dp.add_handler(CommandHandler("quiz", quiz))
+
     dp.add_handler(CommandHandler("music", music))
     dp.add_handler(CommandHandler("classic", classic))
     dp.add_handler(CommandHandler("next_classic", classic))
     dp.add_handler(CommandHandler("next_contemporary", contemporary))
+    dp.add_handler(CommandHandler("contemporary", contemporary))
+    dp.add_handler(CommandHandler("art", art))
+    dp.add_handler(CommandHandler("next_art", next_art))
+
     dp.add_handler(CommandHandler("Bach", bach))
     dp.add_handler(CommandHandler("Glinka", glinka))
     dp.add_handler(CommandHandler("Schubert", schubert))
@@ -372,7 +439,7 @@ def main():
     dp.add_handler(CommandHandler("Vivaldi", vivaldi))
     dp.add_handler(CommandHandler("Grig", grig))
     dp.add_handler(CommandHandler("Mocart", mocart))
-    dp.add_handler(CommandHandler("contemporary", contemporary))
+
     dp.add_handler(CommandHandler("Konfuz", music_check_right))
     dp.add_handler(CommandHandler("Alex_Ataman", music_check_right))
     dp.add_handler(CommandHandler("Jony", music_check_right))
@@ -384,6 +451,7 @@ def main():
     dp.add_handler(CommandHandler("BTS", music_check_right))
     dp.add_handler(CommandHandler("Dabro", music_check_right))
     dp.add_handler(CommandHandler("Nervy", music_check_right))
+
     dp.add_handler(CommandHandler("Ariana_Grande", music_check_mistake))
     dp.add_handler(CommandHandler("Mia_Boyko", music_check_mistake))
     dp.add_handler(CommandHandler("Selena_Gomez", music_check_mistake))
@@ -406,6 +474,25 @@ def main():
     dp.add_handler(CommandHandler("Eldar_Dzharakhov", music_check_mistake))
     dp.add_handler(CommandHandler("Morgenshtern", music_check_mistake))
     dp.add_handler(CommandHandler("Danya_Milokhin", music_check_mistake))
+
+    dp.add_handler(CommandHandler("DIEGO_VELAZQUEZ", paintings_check_right))
+    dp.add_handler(CommandHandler("VINCENT_VAN_GOGH", paintings_check_right))
+    dp.add_handler(CommandHandler("EDWARD_MUNK", paintings_check_right))
+    dp.add_handler(CommandHandler("SALVADOR_DALI", paintings_check_right))
+    dp.add_handler(CommandHandler("OREST_KIPRENSKY", paintings_check_right))
+    dp.add_handler(CommandHandler("REMBRANDT_VAN_RHINE", paintings_check_right))
+    dp.add_handler(CommandHandler("BANKSY", paintings_check_right))
+    dp.add_handler(CommandHandler("LEONARDO_DA_VINCI", paintings_check_right))
+    dp.add_handler(CommandHandler("CLAUDE_MONET", paintings_check_right))
+
+    dp.add_handler(CommandHandler("SANDRO_BOTTICELLI", paintings_check_mistake))
+    dp.add_handler(CommandHandler("PABLO_PICASSO", paintings_check_mistake))
+    dp.add_handler(CommandHandler("RAFAEL_SANTI", paintings_check_mistake))
+    dp.add_handler(CommandHandler("MICHELANGELO_CARAVAGGIO", paintings_check_mistake))
+    dp.add_handler(CommandHandler("KAZIMIR_MALEVICH", paintings_check_mistake))
+    dp.add_handler(CommandHandler("JACKSON_POLLOCK", paintings_check_mistake))
+    dp.add_handler(CommandHandler("EUGENE_DELACROIX", paintings_check_mistake))
+    dp.add_handler(CommandHandler("JEROME_BOSCH", paintings_check_mistake))
 
     dp.add_handler(conv_handler_goroda)
 
