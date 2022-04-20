@@ -32,18 +32,17 @@ music_list_classic = [
     ['Мелодия8.mp3', '/Chajjkovskijj', 'Tanec_malenkikh_lebedejj_iz_baleta_Lebedinoe_ozero',
      '/Vivaldi', '/Schubert', '/Bach'],
     ['Мелодия9.mp3', '/Vivaldi', 'vremena-goda-vesna', '/Betkhoven', '/Mocart', '/Grig']]
-music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor Creed', '/Slava_Marlow', '/Timati'],
+music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor_Creed', '/Slava_Marlow', '/Timati'],
                            ['Песня2.mp3', '/Alex_Ataman', '/Feduk', '/Morgenshtern', '/Mucca'],
-                           ['Песня3.mp3', '/Jony', '/Egor Creed', '/Feduk', 'Danya_Milokhin'],
+                           ['Песня3.mp3', '/Jony', '/Egor_Creed', '/Feduk', '/Danya_Milokhin'],
                            ['Песня4.mp3', '/Klava_Koka', '/Mia_Boyko', '/Dora', '/Polina_Gagarina'],
                            ['Песня5.mp3', '/Femlove', '/King_and_the_Clown', '/Mucca', 'Danya_Milokhin'],
                            ['Песня6.mp3', '/Artur_Pirozhkov', '/Khabib', '/Morgenshtern', '/Eldar_Dzharakhov'],
-                           ['Песня7.mp3', '/Dabro', '/Egor Creed', '/Eldar_Dzharakhov', '/Danya_Milokhin'],
+                           ['Песня7.mp3', '/Dabro', '/Egor_Creed', '/Eldar_Dzharakhov', '/Danya_Milokhin'],
                            ['Песня8.mp3', '/Billie_Eilish', '/Ariana_Grande', '/Selena_Gomez', '/Taylor_Swift'],
                            ['Песня9.mp3', '/BTS', '/EXO', '/XXXTENTACION', '/Kanye_West'],
                            ['Песня10.mp3', '/DEAD_BLONDE', '/Mia_Boyko', '/Maby_Baby', '/Alena_Shvets'],
-                           ['Песня11.mp3', '/Nervy', '/King_and_the_Clown', '/friend_zone', '/Timati'],
-                           ['Песня12.mp3', '/Gayazovsя_Brothers', '/friend_zone', '/Khabib', '/Slava_Marlow']]
+                           ['Песня11.mp3', '/Nervy', '/King_and_the_Clown', '/friend_zone', '/Timati']]
 music_list_classic_new = music_list_classic
 music_list_contemporary_new = music_list_contemporary
 ans_music = ''
@@ -105,8 +104,10 @@ def classic(update, context):  # викторина, музыка
         options = [music_list_classic_new[nomer][1], music_list_classic_new[nomer][-1],
                    music_list_classic_new[nomer][-2], music_list_classic_new[nomer][-3]]
         ans_music = options[0][::]
+        print(ans_music)
         random.shuffle(options, random.random)
         reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
+        prinr(ans_music)
         markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
         chat_id = update.message.chat.id
         meleodia = music_list_classic_new[nomer][0]
@@ -137,23 +138,23 @@ def contemporary(update, context):  # викторина, музыка
         update.message.reply_text(text)
 
 
-def music_check(update, context):
+def music_check_mistake(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_contemporary']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    if ans_music in ['/Konfuz', '/Alex_Ataman', '/Jony', '/Klava_Koka',
-                     '/Femlove', '/Artur_Pirozhkov', '/Billie_Eilish',
-                     '/DEAD_BLONDE', '/Nervy', '/Gayazovsя_Brothers', '/BTS']:
-        update.message.reply_text('Правильно', reply_markup=markup)
-        points += 1
-    else:
-        text = 'Правильный ответ: ' + ans_music[1:]
-        update.message.reply_text(text, reply_markup=markup)
+    text = 'Правильный ответ: ' + ans_music[1:]
+    update.message.reply_text(text, reply_markup=markup)
 
+def music_check_right(update, context):
+    global points
+    reply_keyboard = [['/next_contemporary']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('Правильно', reply_markup=markup)
+    points += 1
 
 def bach(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Bach':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -165,7 +166,7 @@ def bach(update, context):
 
 def glinka(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Glinka':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -177,7 +178,7 @@ def glinka(update, context):
 
 def schubert(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Schubert':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -189,7 +190,7 @@ def schubert(update, context):
 
 def chajjkovskijj(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Chajjkovskijj':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -201,7 +202,7 @@ def chajjkovskijj(update, context):
 
 def betkhoven(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Betkhoven':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -213,7 +214,7 @@ def betkhoven(update, context):
 
 def chopin(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Chopin':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -225,7 +226,7 @@ def chopin(update, context):
 
 def vivaldi(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Vivaldi':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -237,7 +238,7 @@ def vivaldi(update, context):
 
 def grig(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Grig':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -249,7 +250,7 @@ def grig(update, context):
 
 def mocart(update, context):
     global points
-    reply_keyboard = [['/next']]  # кнопка
+    reply_keyboard = [['/next_classic']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     if ans_music == '/Mocart':
         update.message.reply_text('Правильно', reply_markup=markup)
@@ -360,7 +361,8 @@ def main():
     dp.add_handler(CommandHandler("quiz", quiz))
     dp.add_handler(CommandHandler("music", music))
     dp.add_handler(CommandHandler("classic", classic))
-    dp.add_handler(CommandHandler("next", classic))
+    dp.add_handler(CommandHandler("next_classic", classic))
+    dp.add_handler(CommandHandler("next_contemporary", contemporary))
     dp.add_handler(CommandHandler("Bach", bach))
     dp.add_handler(CommandHandler("Glinka", glinka))
     dp.add_handler(CommandHandler("Schubert", schubert))
@@ -371,38 +373,39 @@ def main():
     dp.add_handler(CommandHandler("Grig", grig))
     dp.add_handler(CommandHandler("Mocart", mocart))
     dp.add_handler(CommandHandler("contemporary", contemporary))
-    dp.add_handler(CommandHandler("Konfuz", music_check))
-    dp.add_handler(CommandHandler("Alex_Ataman", music_check))
-    dp.add_handler(CommandHandler("Jony", music_check))
-    dp.add_handler(CommandHandler("Klava_Koka", music_check))
-    dp.add_handler(CommandHandler("Femlove", music_check))
-    dp.add_handler(CommandHandler("Artur_Pirozhkov", music_check))
-    dp.add_handler(CommandHandler("Billie_Eilish", music_check))
-    dp.add_handler(CommandHandler("DEAD_BLONDE", music_check))
-    #dp.add_handler(CommandHandler("Gayazovsя_Brothers", music_check))
-    dp.add_handler(CommandHandler("BTS", music_check))
-    dp.add_handler(CommandHandler("Ariana_Grande", music_check))
-    dp.add_handler(CommandHandler("Mia_Boyko", music_check))
-    dp.add_handler(CommandHandler("Selena_Gomez", music_check))
-    dp.add_handler(CommandHandler("Taylor_Swift", music_check))
-    dp.add_handler(CommandHandler("Maby_Baby", music_check))
-    dp.add_handler(CommandHandler("Alena_Shvets", music_check))
-    dp.add_handler(CommandHandler("Dora", music_check))
-    dp.add_handler(CommandHandler("Polina_Gagarina", music_check))
-    dp.add_handler(CommandHandler("Egor_Creed", music_check))
-    dp.add_handler(CommandHandler("King_and_the_Clown", music_check))
-    dp.add_handler(CommandHandler("EXO", music_check))
-    dp.add_handler(CommandHandler("XXXTENTACION", music_check))
-    dp.add_handler(CommandHandler("Kanye_West", music_check))
-    dp.add_handler(CommandHandler("friend_zone", music_check))
-    dp.add_handler(CommandHandler("Feduk", music_check))
-    dp.add_handler(CommandHandler("Slava_Marlow", music_check))
-    dp.add_handler(CommandHandler("Khabib", music_check))
-    dp.add_handler(CommandHandler("Timati", music_check))
-    dp.add_handler(CommandHandler("Mucca", music_check))
-    dp.add_handler(CommandHandler("Eldar_Dzharakhov", music_check))
-    dp.add_handler(CommandHandler("Morgenshtern", music_check))
-    dp.add_handler(CommandHandler("Danya_Milokhin", music_check))
+    dp.add_handler(CommandHandler("Konfuz", music_check_right))
+    dp.add_handler(CommandHandler("Alex_Ataman", music_check_right))
+    dp.add_handler(CommandHandler("Jony", music_check_right))
+    dp.add_handler(CommandHandler("Klava_Koka", music_check_right))
+    dp.add_handler(CommandHandler("Femlove", music_check_right))
+    dp.add_handler(CommandHandler("Artur_Pirozhkov", music_check_right))
+    dp.add_handler(CommandHandler("Billie_Eilish", music_check_right))
+    dp.add_handler(CommandHandler("DEAD_BLONDE", music_check_right))
+    dp.add_handler(CommandHandler("BTS", music_check_right))
+    dp.add_handler(CommandHandler("Dabro", music_check_right))
+    dp.add_handler(CommandHandler("Nervy", music_check_right))
+    dp.add_handler(CommandHandler("Ariana_Grande", music_check_mistake))
+    dp.add_handler(CommandHandler("Mia_Boyko", music_check_mistake))
+    dp.add_handler(CommandHandler("Selena_Gomez", music_check_mistake))
+    dp.add_handler(CommandHandler("Taylor_Swift", music_check_mistake))
+    dp.add_handler(CommandHandler("Maby_Baby", music_check_mistake))
+    dp.add_handler(CommandHandler("Alena_Shvets", music_check_mistake))
+    dp.add_handler(CommandHandler("Dora", music_check_mistake))
+    dp.add_handler(CommandHandler("Polina_Gagarina", music_check_mistake))
+    dp.add_handler(CommandHandler("Egor_Creed", music_check_mistake))
+    dp.add_handler(CommandHandler("King_and_the_Clown", music_check_mistake))
+    dp.add_handler(CommandHandler("EXO", music_check_mistake))
+    dp.add_handler(CommandHandler("XXXTENTACION", music_check_mistake))
+    dp.add_handler(CommandHandler("Kanye_West", music_check_mistake))
+    dp.add_handler(CommandHandler("friend_zone", music_check_mistake))
+    dp.add_handler(CommandHandler("Feduk", music_check_mistake))
+    dp.add_handler(CommandHandler("Slava_Marlow", music_check_mistake))
+    dp.add_handler(CommandHandler("Khabib", music_check_mistake))
+    dp.add_handler(CommandHandler("Timati", music_check_mistake))
+    dp.add_handler(CommandHandler("Mucca", music_check_mistake))
+    dp.add_handler(CommandHandler("Eldar_Dzharakhov", music_check_mistake))
+    dp.add_handler(CommandHandler("Morgenshtern", music_check_mistake))
+    dp.add_handler(CommandHandler("Danya_Milokhin", music_check_mistake))
 
     dp.add_handler(conv_handler_goroda)
 
