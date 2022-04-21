@@ -58,26 +58,21 @@ art_list = [['Картина1.jpg', '/DIEGO_VELAZQUEZ', '/SANDRO_BOTTICELLI', '/
             ['Картина9.jpg', '/CLAUDE_MONET', '/PABLO_PICASSO', '/KAZIMIR_MALEVICH',
              '/EUGENE_DELACROIX']]  # список картин для игры в викторину искусство
 
-films_list = [['Фильм1.jpg', '/Krik', '/Pyatnitsa_13-ye', '/Krovavoye_leto' , '/YA_znayu_chto_vy_sdelali_proshlym_letom'],
-              ['Фильм2.jpg', '/Tachki', '/Gonka:Pushechnoye_yadro', '/Avtomobili' , '/Beregis_avtomobilya'],
-              ['Фильм3.jpg', '/Kavkazskaya_plennitsa_ili_Novyye_priklyucheniya_Shurika', '/Ironiya_Sudby_ili_s_logkim_parom', '/Afonya' , '/Dozhivem_do_ponedelnika'],
-              ['Фильм4.jpg', '/Sudya_Dredd', '/Razrushitel', '/Kobra' , '/Politseyskiy_bespredel'],
-              ['Фильм5.jpg', '/Titanik', '/1912', '/Kapitan_Kryuk' , '/Romeo_Dzhulyetta'],
-              ['Фильм6.jpg', '/', '/', '/' , '/'],
-              ['Фильм7.jpg', '/', '/', '/' , '/'],
-              ['Фильм8.jpg', '/', '/', '/' , '/'],
-              ['Фильм9.jpg', '/', '/', '/' , '/'],
-              ['Фильм10.jpg', '/', '/', '/' , '/'],
-              ['Фильм11.jpg', '/', '/', '/' , '/'],
-              ['Фильм12.jpg', '/', '/', '/' , '/'],
-              ['Фильм13.jpg', '/', '/', '/' , '/'],
-              ['Фильм14.jpg', '/', '/', '/' , '/'],
-              ['Фильм15.jpg', '/', '/', '/' , '/'],
-              ['Фильм16.jpg', '/', '/', '/' , '/'],
-              ['Фильм17.jpg', '/', '/', '/' , '/'],
-              ['Фильм18.jpg', '/', '/', '/' , '/'],
-              ['Фильм19.jpg', '/', '/', '/' , '/'],
-              ['Фильм20.jpg', '/', '/', '/' , '/']] # список картин для игры в викторину фильмы
+films_list = [
+    ['Фильм1.jpg', '/Krik', '/Pyatnitsa_13', '/Krovavoye_leto', '/Tretiy_Lishniy'],
+    ['Фильм2.jpg', '/Tachki', '/Gonka_Pushechnoye_yadro', '/Avtomobili', '/Beregis_avtomobilya'],
+    ['Фильм3.jpg', '/Kavkazskaya_plennitsa', '/Ironiya_Sudby_ili_s_logkim_parom',
+     '/Afonya', '/Dozhivem_do_ponedelnika'],
+    ['Фильм4.jpg', '/Sudya_Dredd', '/Razrushitel', '/Kobra', '/Politseyskiy_bespredel'],
+    ['Фильм5.jpg', '/Titanik', '/1912', '/Kapitan_Kryuk', '/Romeo_Dzhulyetta'],
+    ['Фильм6.jpg', '/Angely_Charli', '/Komanda_A', '/8_Podrug_Oushena', '/Operatsiya_Argo'],
+    ['Фильм7.jpg', '/Office', '/Biezumcy', '/Kak_ya_vstretil_vashu_mamu', '/Malkolm_v_tsentre_vnimaniya'],
+    ['Фильм8.jpg', '/Alexander', '/Troya', '/Bogi_i_Monstry', '/Gladiator'],
+    ['Фильм9.jpg', '/Amerikanskiy_Pirog', '/Euro_Tour', '/Super_Pertsy', '/Tretiy_Lishniy'],
+    ['Фильм10.jpg', '/Brat', '/Den_rozhdeniya_Burzhuya', '/Boomer', '/Brigada'],
+    ['Фильм11.jpg', '/Lyudi_v_chornom_2', '/Lyudi_v_chornom', '/Lyudi_v_chornom_interneshnl', '/Lyudi_v_chornom_3'],
+    ['Фильм12.jpg', '/Den_Surka', '/Pomni', '/Bolshoy',
+     '/Novaya_rozhdestvenskaya_istoriya']]  # список картин для игры в викторину фильмы
 
 music_list_classic_new = music_list_classic  # для игры в викторину: музыка
 music_list_contemporary_new = music_list_contemporary
@@ -85,6 +80,9 @@ ans_music = ''
 
 art_list_new = art_list  # для игры в викторину: искусство
 ans_art = ''
+
+films_list_new = films_list
+ans_film = ''
 
 nomer = 0
 points = 0
@@ -120,7 +118,7 @@ def rules(update, context):  # ---Правила игры--- # ИСПРАВИТ�
 
 
 def quiz(update, context):  # игра - викторина
-    reply_keyboard = [['/история', '/логика'], ['/art', '/music']]  # кнопка
+    reply_keyboard = [['/movie'], ['/art', '/music']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('В какую викторину вы хотите сыграть?', reply_markup=markup)
 
@@ -140,14 +138,12 @@ def music(update, context):  # викторина, музыка
 
 def classic(update, context):  # викторина, музыка
     global ans_music, nomer
-    if nomer != 9:
+    if nomer != 5:
         options = [music_list_classic_new[nomer][1], music_list_classic_new[nomer][-1],
                    music_list_classic_new[nomer][-2], music_list_classic_new[nomer][-3]]
         ans_music = options[0][::]
-        print(ans_music)
         random.shuffle(options, random.random)
         reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
-        prinr(ans_music)
         markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
         chat_id = update.message.chat.id
         meleodia = music_list_classic_new[nomer][0]
@@ -155,7 +151,7 @@ def classic(update, context):  # викторина, музыка
         context.bot.send_audio(chat_id=chat_id, audio=open(meleodia, 'rb'))
         update.message.reply_text('Выберите композитора', reply_markup=markup)
     else:
-        text = 'Ваш результат: ' + str(points) + ' из 9'
+        text = 'Ваш результат: ' + str(points) + ' из 5'
         update.message.reply_text(text)
 
 
@@ -194,7 +190,7 @@ def music_check_right(update, context):
     points += 1
 
 
-def art(update, context):  # викторина, музыка
+def art(update, context):  # викторина, картины
     global art_list, nomer, points, art_list_new
     nomer = 0
     points = 0
@@ -202,7 +198,7 @@ def art(update, context):  # викторина, музыка
     art_list_new = art_list
     reply_keyboard = [['/next_art']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    update.message.reply_text(':)', reply_markup=markup)  # ИСПРАВИТЬ
+    update.message.reply_text('Удачи)', reply_markup=markup)
 
 
 def next_art(update, context):  # викторина, музыка
@@ -239,6 +235,50 @@ def paintings_check_right(update, context):
     update.message.reply_text('Правильно', reply_markup=markup)
     points += 1
 
+def movie(update, context):  # викторина, картины
+    global films_list, nomer, points, films_list_new
+    nomer = 0
+    points = 0
+    random.shuffle(films_list, random.random)
+    films_list_new = films_list
+    reply_keyboard = [['/next_movie']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('Удачи)', reply_markup=markup)
+
+
+def next_movie(update, context):  # викторина, музыка
+    global ans_film, nomer
+    if nomer != 5:
+        options = [films_list_new[nomer][1], films_list_new[nomer][-1],
+                   films_list_new[nomer][-2], films_list_new[nomer][-3]]
+        ans_film = options[0][::]
+        random.shuffle(options, random.random)
+        reply_keyboard = [[options[0], options[1]], [options[2], options[3]]]  # кнопка
+        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        chat_id = update.message.chat.id
+        picture = films_list_new[nomer][0]
+        nomer += 1
+        context.bot.send_photo(chat_id=chat_id, photo=open(picture, 'rb'))
+        update.message.reply_text('Выберите название фильма', reply_markup=markup)
+    else:
+        text = 'Ваш результат: ' + str(points) + ' из 5'
+        update.message.reply_text(text)
+
+
+def logics_check_mistake(update, context):
+    global points
+    reply_keyboard = [['/next_movie']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    text = 'Правильный ответ: ' + ans_film[1:]
+    update.message.reply_text(text, reply_markup=markup)
+
+
+def logics_check_right(update, context):
+    global points
+    reply_keyboard = [['/next_movie']]  # кнопка
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    update.message.reply_text('Правильно', reply_markup=markup)
+    points += 1
 
 def bach(update, context):  # Функции для викторины: музыка, классика
     global points
@@ -450,6 +490,8 @@ def main():
     dp.add_handler(CommandHandler("contemporary", contemporary))
     dp.add_handler(CommandHandler("art", art))
     dp.add_handler(CommandHandler("next_art", next_art))
+    dp.add_handler(CommandHandler("movie", movie))
+    dp.add_handler(CommandHandler("next_movie", next_movie))
 
     dp.add_handler(CommandHandler("Bach", bach))
     dp.add_handler(CommandHandler("Glinka", glinka))
@@ -517,29 +559,21 @@ def main():
 
     dp.add_handler(CommandHandler("Krik", logics_check_right))
     dp.add_handler(CommandHandler("Tachki", logics_check_right))
-    dp.add_handler(CommandHandler("Kavkazskaya_plennitsa_ili_Novyye_priklyucheniya_Shurika", logics_check_right))
+    dp.add_handler(CommandHandler("Kavkazskaya_plennitsa", logics_check_right))
     dp.add_handler(CommandHandler("Dozhivem_do_ponedelnika", logics_check_right))
     dp.add_handler(CommandHandler("Titanik", logics_check_right))
     dp.add_handler(CommandHandler("Sudya_Dredd", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
-    dp.add_handler(CommandHandler("Nervy", logics_check_right))
+    dp.add_handler(CommandHandler("Angely_Charli", logics_check_right))
+    dp.add_handler(CommandHandler("Office", logics_check_right))
+    dp.add_handler(CommandHandler("Alexander", logics_check_right))
+    dp.add_handler(CommandHandler("Amerikanskiy_Pirog", logics_check_right))
+    dp.add_handler(CommandHandler("Brat", logics_check_right))
+    dp.add_handler(CommandHandler("Lyudi_v_chornom_2", logics_check_right))
+    dp.add_handler(CommandHandler("Den_Surka", logics_check_right))
 
-    dp.add_handler(CommandHandler("Pyatnitsa_13-ye", logics_check_mistake))
+    dp.add_handler(CommandHandler("Pyatnitsa_13", logics_check_mistake))
     dp.add_handler(CommandHandler("Krovavoye_leto", logics_check_mistake))
-    dp.add_handler(CommandHandler("YA_znayu_chto_vy_sdelali_proshlym_letom", logics_check_mistake))
-    dp.add_handler(CommandHandler("Gonka:Pushechnoye_yadro", logics_check_mistake))
+    dp.add_handler(CommandHandler("Gonka_Pushechnoye_yadro", logics_check_mistake))
     dp.add_handler(CommandHandler("Avtomobili", logics_check_mistake))
     dp.add_handler(CommandHandler("Beregis_avtomobilya", logics_check_mistake))
     dp.add_handler(CommandHandler("Ironiya_Sudby_ili_s_logkim_parom", logics_check_mistake))
@@ -550,37 +584,27 @@ def main():
     dp.add_handler(CommandHandler("1912", logics_check_mistake))
     dp.add_handler(CommandHandler("Kapitan_Kryuk", logics_check_mistake))
     dp.add_handler(CommandHandler("Romeo_Dzhulyetta", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
-    dp.add_handler(CommandHandler("Danya_Milokhin", logics_check_mistake))
+    dp.add_handler(CommandHandler("Komanda_A", logics_check_mistake))
+    dp.add_handler(CommandHandler("8_Podrug_Oushena", logics_check_mistake))
+    dp.add_handler(CommandHandler("Operatsiya_Argo", logics_check_mistake))
+    dp.add_handler(CommandHandler("Biezumcy", logics_check_mistake))
+    dp.add_handler(CommandHandler("Kak_ya_vstretil_vashu_mamu", logics_check_mistake))
+    dp.add_handler(CommandHandler("Malkolm_v_tsentre_vnimaniya", logics_check_mistake))
+    dp.add_handler(CommandHandler("Troya", logics_check_mistake))
+    dp.add_handler(CommandHandler("Bogi_i_Monstry", logics_check_mistake))
+    dp.add_handler(CommandHandler("Gladiator", logics_check_mistake))
+    dp.add_handler(CommandHandler("Euro_Tour", logics_check_mistake))
+    dp.add_handler(CommandHandler("Super_Pertsy", logics_check_mistake))
+    dp.add_handler(CommandHandler("Tretiy_Lishniy", logics_check_mistake))
+    dp.add_handler(CommandHandler("Den_rozhdeniya_Burzhuya", logics_check_mistake))
+    dp.add_handler(CommandHandler("Boomer", logics_check_mistake))
+    dp.add_handler(CommandHandler("Brigada", logics_check_mistake))
+    dp.add_handler(CommandHandler("Lyudi_v_chornom", logics_check_mistake))
+    dp.add_handler(CommandHandler("Lyudi_v_chornom_interneshnl", logics_check_mistake))
+    dp.add_handler(CommandHandler("Lyudi_v_chornom_3", logics_check_mistake))
+    dp.add_handler(CommandHandler("Pomni", logics_check_mistake))
+    dp.add_handler(CommandHandler("Bolshoy", logics_check_mistake))
+    dp.add_handler(CommandHandler("Novaya_rozhdestvenskaya_istoriya", logics_check_mistake))
 
     dp.add_handler(conv_handler_goroda)
 
