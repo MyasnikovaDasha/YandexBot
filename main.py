@@ -2,6 +2,8 @@
 import logging  # Импортируем необходимые классы.
 import json
 import random
+import sys
+import requests
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup
 
@@ -417,6 +419,26 @@ def goroda_player_turn(update, context):
     word.replace("-Он-", '-он-')
     word = word.replace('ё', 'e')
     word = word.replace('Ё', 'Е')
+
+    geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode=Чебоксары&format=json"
+    geocoder_response = requests.get(geocoder_request).json()
+    coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
+    print(','.join(coord.split()))
+    coord_request = f"https://static-maps.yandex.ru/1.x/?ll=47.247728,56.139918&spn=0.252,0.252&l=sat,skl"
+    print(coord_request)
+    coord_response = requests.get(coord_request)
+
+    map_file = "map.png"
+    if not coord_response:
+        print("Ошибка выполнения запроса:")
+        print(coord_response)
+        print("Http статус:", coord_response.status_code, "(", coord_response.reason, ")")
+        sys.exit(1)
+
+    with open(map_file, "wb") as file:
+        file.write(coord_response.content)
+    update.message.reply_photo(map_file)
+
     try:
         first_key_words = city_data[word[0].upper()]
         if word in used_cities:
