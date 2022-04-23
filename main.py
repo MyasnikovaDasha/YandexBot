@@ -14,10 +14,12 @@ logger = logging.getLogger(__name__)
 
 TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
 
-with open('sorted_cities.json', encoding="utf-8") as city_file:  # Городов всего: 10969
+with open('sorted_russian_cities.json', encoding="utf-8") as city_file:
     city_data = json.load(city_file)
 
-used_cities = []  # Переменные для работы игры "Города"
+used_cities = {}  # Переменные для работы игры "Города"
+used_cities_log = []
+ban = ['ь', 'ы', 'ъ', 'й']
 phrases = ["Принято!", "Слышал что-то знакомое...", "Записал!", "Так значит? Ну держись тогда!", "Прекрасное местечко!",
            "Я бы хотел там оказаться...", "Ни за что туда не отправлюсь.", "Такой себе город, я бы там не жил.",
            "Засчитываю!",
@@ -391,9 +393,15 @@ def mocart(update, context):  # Функции для викторины: муз
 
 
 def start_goroda(update, context):  # игра - города
-    update.message.reply_text(
-        "Приветствую в игре города! Напиши \'Go\', если хочешь, "
-        "чтоб мы начали. В любое время напиши /stop и мы закончим игру")
+    text = '\n '.join(["Приветствую в игре города! Напиши \'Go\', если хочешь, чтоб мы начали.",
+                       "В любое время напиши /stop и мы закончим игру.",
+                       "Правила: Города называются только русские.",
+                       "Вводите названия с большой буквы, ставьте дефисы и пробелы, где нужно."
+                      "Если предыдущий город заканчивается на 'ь', 'ы', 'ъ' или 'й' (Прости меня, Йошкар-Ола),"
+                      " то следующий город называется на идущую перед ней букву.",
+                      "Если я не смогу вспомнить город на твою букву, то ты победишь!",
+                      "Удачи!"])
+    update.message.reply_text(text)
     return 1
 
 
@@ -404,8 +412,30 @@ def sure_goroda(update, context):
         temp = random.choice(temp)
         temp = city_data[temp]
         word = random.choice(temp)
-        used_cities.append(word)
-        update.message.reply_text(f'Отлично. Я начну. Мой город: {word}')
+
+        j = -1
+        system_word = word
+        while word[j] in ban:
+            j -= 1
+        if j != -1:
+            system_word = word[:j + 1]
+        if word[0] not in used_cities:
+            used_cities[word[0]] = [system_word]
+        else:
+            used_cities[word[0]].append(system_word)
+        used_cities_log.append(system_word)
+        try:
+            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={word}&format=json"
+            geocoder_response = requests.get(geocoder_request).json()
+            print(geocoder_response)
+            coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
+            print(','.join(coord.split()))
+            coord_request = f"https://static-maps.yandex.ru/1.x/?ll={','.join(coord.split())}&spn=0.252,0.252&l=sat,skl"
+            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+            update.message.reply_photo(coord_request)
+        except IndexError:
+            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+
         return 2
     update.message.reply_text('Не понял тебя. Повтори, пожалуйста.')
     return 1
@@ -413,71 +443,93 @@ def sure_goroda(update, context):
 
 def goroda_player_turn(update, context):
     word = update.message.text
-    word = ' '.join([i.lower().capitalize() for i in word.split()])
-    word = '-'.join([i.lower().capitalize() for i in word.split('-')])
-    word.replace("-На-", "-на-")
-    word.replace("-Он-", '-он-')
-    word = word.replace('ё', 'e')
-    word = word.replace('Ё', 'Е')
-
-    geocoder_request = "http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode=Чебоксары&format=json"
-    geocoder_response = requests.get(geocoder_request).json()
-    coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
-    print(','.join(coord.split()))
-    coord_request = f"https://static-maps.yandex.ru/1.x/?ll=47.247728,56.139918&spn=0.252,0.252&l=sat,skl"
-    print(coord_request)
-    coord_response = requests.get(coord_request)
-
-    map_file = "map.png"
-    if not coord_response:
-        print("Ошибка выполнения запроса:")
-        print(coord_response)
-        print("Http статус:", coord_response.status_code, "(", coord_response.reason, ")")
-        sys.exit(1)
-
-    with open(map_file, "wb") as file:
-        file.write(coord_response.content)
-    update.message.reply_photo(map_file)
 
     try:
-        first_key_words = city_data[word[0].upper()]
-        if word in used_cities:
+        j = -1
+        system_word = word
+        while word[j] in ban:
+            j -= 1
+        if j != -1:
+            system_word = word[:j + 1]
+        if system_word in used_cities_log:
             update.message.reply_text(f'Город {word} уже упоминался. Давай ещё раз и не повторяйся!')
             return 2
-        if word not in first_key_words:
+        if word not in city_data[word[0]]:
             update.message.reply_text('Нет в словаре')
             print(word)
-            print(first_key_words)
+            print(city_data[word[0]])
             return 2
-        if not (used_cities[-1][-1] == word[0].lower() or
-                used_cities[-1][-2] == word[0].lower() and used_cities[-1][-1].lower() in 'ъыь'):
+        if not (used_cities_log[-1][-1] == word[0].lower()):
             update.message.reply_text('Не совпадает с буквой')
             return 2
-        used_cities.append(word)
-        print(used_cities)
-        word = goroda_computer_turn()
-        update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}')
+
+
+        if word[0] not in used_cities:
+            used_cities[word[0]] = [system_word]
+        else:
+            used_cities[word[0]].append(system_word)
+        used_cities_log.append(system_word)
+
+        word = goroda_computer_turn(word[0])
+        if not word:
+            update.message.reply_text('Ой-ой. Похоже вы выиграли! Мои поздравления! Заканчиваю игру')
+            stop_goroda(update, context)
+
+        try:
+            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={word}&format=json"
+            geocoder_response = requests.get(geocoder_request).json()
+
+            coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
+
+            coord_request = f"https://static-maps.yandex.ru/1.x/?ll={','.join(coord.split())}&spn=0.252,0.252&l=sat,skl"
+
+            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+            update.message.reply_photo(coord_request)
+        except IndexError:
+            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+
         return 2
     except KeyError:
         print("Такого города ЯВНО не существует")
         return 2
 
 
-def goroda_computer_turn():
-    next_key = used_cities[-1][-1].capitalize()
-    if next_key in 'ЪЫЬ':
-        next_key = used_cities[-1][-2].capitalize()
+def goroda_computer_turn(word):
+    next_key = used_cities[word[0]][-1][-1].upper()
+    if len(city_data[next_key]) == len(used_cities[word[0]]):
+        return None
+
     word = random.choice(city_data[next_key])
-    while word in used_cities:
-        print(' застрял')
+    j = -1
+    system_word = word
+    while word[j] in ban:
+        j -= 1
+    if j != -1:
+        system_word = word[:j + 1]
+
+    while system_word in used_cities_log:
         word = random.choice(city_data[next_key])
-    used_cities.append(word)
+        j = -1
+        system_word = word
+        while word[j] in ban:
+            j -= 1
+        if j != -1:
+            system_word = word[:j + 1]
+        print(' застрял')
+
+    if word[0] not in used_cities:
+        used_cities[word[0]] = [system_word]
+    else:
+        used_cities[word[0]].append(system_word)
+    used_cities_log.append(system_word)
+
     return word
 
 
 def stop_goroda(update, context):
     update.message.reply_text("Принято! Интересно поиграли!")
-    used_cities.clear()
+    for i in used_cities.keys():
+        del used_cities[i]
     return ConversationHandler.END
 
 
