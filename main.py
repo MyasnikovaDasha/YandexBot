@@ -449,7 +449,7 @@ def goroda_player_turn(update, context):
             update.message.reply_text(f'Город {word} уже упоминался. Давай ещё раз и не повторяйся!')
             return 2
         if word not in city_data[word[0]]:
-            update.message.reply_text('Нет в словаре')
+            update.message.reply_text('Не знаю такого русского города')
             print(word)
             print(city_data[word[0]])
             return 2
