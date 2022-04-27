@@ -101,9 +101,9 @@ def start(update, context):  # приветствие пользователя
 
 
 def skills(update, context):  # навыки бота
-    reply_keyboard = [['/play', '/rules']]  # кнопка
+    reply_keyboard = [['/play']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру", "✅ /rules - правила игры"])
+    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру"])
     update.message.reply_text(text, reply_markup=markup)
 
 
@@ -111,14 +111,6 @@ def play(update, context):  # выбор игры
     reply_keyboard = [['/goroda', '/quiz']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('В какую игру ты хочешь сыграть?', reply_markup=markup)
-
-
-def rules(update, context):  # ---Правила игры--- # ИСПРАВИТЬ
-    reply_keyboard = [['/play', ]]  # кнопка
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-    text = '\n'.join(["✅ /play - выбрать и сыграть с ботом в словесную игру",
-                      "✅ /rules - правила игры"])
-    update.message.reply_text(text, reply_markup=markup)
 
 
 def quiz(update, context):  # игра - викторина
@@ -557,7 +549,6 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("skills", skills))
     dp.add_handler(CommandHandler("play", play))
-    dp.add_handler(CommandHandler("rules", rules))
     dp.add_handler(CommandHandler("quiz", quiz))
 
     dp.add_handler(CommandHandler("music", music))
