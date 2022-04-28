@@ -42,7 +42,7 @@ music_list_contemporary = [['Песня1.mp3', '/Konfuz', '/Egor_Creed', '/Slava
                            ['Песня2.mp3', '/Alex_Ataman', '/Feduk', '/Morgenshtern', '/Mucca'],
                            ['Песня3.mp3', '/Jony', '/Egor_Creed', '/Feduk', '/Danya_Milokhin'],
                            ['Песня4.mp3', '/Klava_Koka', '/Mia_Boyko', '/Dora', '/Polina_Gagarina'],
-                           ['Песня5.mp3', '/Femlove', '/King_and_the_Clown', '/Mucca', 'Danya_Milokhin'],
+                           ['Песня5.mp3', '/Femlove', '/King_and_the_Clown', '/Mucca', '/Danya_Milokhin'],
                            ['Песня6.mp3', '/Artur_Pirozhkov', '/Khabib', '/Morgenshtern', '/Eldar_Dzharakhov'],
                            ['Песня7.mp3', '/Dabro', '/Egor_Creed', '/Eldar_Dzharakhov', '/Danya_Milokhin'],
                            ['Песня8.mp3', '/Billie_Eilish', '/Ariana_Grande', '/Selena_Gomez', '/Taylor_Swift'],
