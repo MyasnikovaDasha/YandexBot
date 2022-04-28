@@ -170,7 +170,7 @@ def contemporary(update, context):  # викторина, музыка
         update.message.reply_text(text)
 
 
-def music_check_mistake(update, context):
+def music_check_mistake(update, context):  # В случае неверного ответа
     global points
     reply_keyboard = [['/next_contemporary']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -178,7 +178,7 @@ def music_check_mistake(update, context):
     update.message.reply_text(text, reply_markup=markup)
 
 
-def music_check_right(update, context):
+def music_check_right(update, context):  # В случае правильного ответа
     global points
     reply_keyboard = [['/next_contemporary']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -216,7 +216,7 @@ def next_art(update, context):  # викторина, музыка
         update.message.reply_text(text)
 
 
-def paintings_check_mistake(update, context):
+def paintings_check_mistake(update, context):  # В случае неверного ответа
     global points
     reply_keyboard = [['/next_art']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -224,12 +224,13 @@ def paintings_check_mistake(update, context):
     update.message.reply_text(text, reply_markup=markup)
 
 
-def paintings_check_right(update, context):
+def paintings_check_right(update, context):  # В случае правильного ответа
     global points
     reply_keyboard = [['/next_art']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('Правильно', reply_markup=markup)
     points += 1
+
 
 def movie(update, context):  # викторина, картины
     global films_list, nomer, points, films_list_new
@@ -261,7 +262,7 @@ def next_movie(update, context):  # викторина, музыка
         update.message.reply_text(text)
 
 
-def logics_check_mistake(update, context):
+def logics_check_mistake(update, context):  # В случае неверного ответа
     global points
     reply_keyboard = [['/next_movie']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -269,12 +270,13 @@ def logics_check_mistake(update, context):
     update.message.reply_text(text, reply_markup=markup)
 
 
-def logics_check_right(update, context):
+def logics_check_right(update, context):  # В случае правильного ответа
     global points
     reply_keyboard = [['/next_movie']]  # кнопка
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     update.message.reply_text('Правильно', reply_markup=markup)
     points += 1
+
 
 def bach(update, context):  # Функции для викторины: музыка, классика
     global points
@@ -399,7 +401,7 @@ def start_goroda(update, context):  # игра - города
     return 1
 
 
-def sure_goroda(update, context):
+def sure_goroda(update, context):  # Подтверждение о начале игры и создание начального города
     ans = update.message.text
     if ans.lower().capitalize() == "Go":
         temp = list(city_data.keys())
@@ -419,23 +421,24 @@ def sure_goroda(update, context):
             used_cities[word[0]].append(system_word)
         used_cities_log.append(system_word)
         try:
-            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={word}&format=json"
-            geocoder_response = requests.get(geocoder_request).json()
-            print(geocoder_response)
-            coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
-            print(','.join(coord.split()))
+            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b" \
+                               f"&geocode={word}&format=json"
+            geocoder_resp = requests.get(geocoder_request).json()
+            coord = geocoder_resp["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
             coord_request = f"https://static-maps.yandex.ru/1.x/?ll={','.join(coord.split())}&spn=0.252,0.252&l=sat,skl"
-            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. '
+                                      f'Вам на {used_cities[word[0]][-1][-1].upper()}')
             update.message.reply_photo(coord_request)
         except IndexError:
-            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+            update.message.reply_text(f'Отлично. Я начну. Мой город: {word}. '
+                                      f'Вам на {used_cities[word[0]][-1][-1].upper()}')
 
         return 2
     update.message.reply_text('Не понял тебя. Повтори, пожалуйста.')
     return 1
 
 
-def goroda_player_turn(update, context):
+def goroda_player_turn(update, context):  # Ход игрока и его проверка
     word = update.message.text
 
     try:
@@ -450,13 +453,10 @@ def goroda_player_turn(update, context):
             return 2
         if word not in city_data[word[0]]:
             update.message.reply_text('Не знаю такого русского города')
-            print(word)
-            print(city_data[word[0]])
             return 2
         if not (used_cities_log[-1][-1] == word[0].lower()):
             update.message.reply_text('Не совпадает с буквой')
             return 2
-
 
         if word[0] not in used_cities:
             used_cities[word[0]] = [system_word]
@@ -470,26 +470,29 @@ def goroda_player_turn(update, context):
             stop_goroda(update, context)
 
         try:
-            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={word}&format=json"
-            geocoder_response = requests.get(geocoder_request).json()
+            geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b" \
+                               f"&geocode={word}&format=json"
+            geocoder_resp = requests.get(geocoder_request).json()
 
-            coord = geocoder_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
+            coord = geocoder_resp["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
 
             coord_request = f"https://static-maps.yandex.ru/1.x/?ll={','.join(coord.split())}&spn=0.252,0.252&l=sat,skl"
 
-            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. '
+                                      f'Вам на {used_cities[word[0]][-1][-1].upper()}')
             update.message.reply_photo(coord_request)
-        except IndexError:
-            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. Вам на {used_cities[word[0]][-1][-1].upper()}')
+        except Exception:
+            update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. '
+                                      f'Вам на {used_cities[word[0]][-1][-1].upper()}')
             update.message.reply_text(f'Я не смог найти город на карте 😞')
 
         return 2
     except KeyError:
-        print("Такого города ЯВНО не существует")
+        update.message.reply_text("Такого города ЯВНО не существует")
         return 2
 
 
-def goroda_computer_turn(word):
+def goroda_computer_turn(word):  # Ход компьютера
     next_key = used_cities[word[0]][-1][-1].upper()
     if len(city_data[next_key]) == len(used_cities[word[0]]):
         return None
@@ -510,7 +513,6 @@ def goroda_computer_turn(word):
             j -= 1
         if j != -1:
             system_word = word[:j + 1]
-        print(' застрял')
 
     if word[0] not in used_cities:
         used_cities[word[0]] = [system_word]
@@ -521,31 +523,29 @@ def goroda_computer_turn(word):
     return word
 
 
-def stop_goroda(update, context):
+def stop_goroda(update, context):  # Функция завершения игры в города
     update.message.reply_text("Принято! Интересно поиграли!")
     for i in used_cities.keys():
         del used_cities[i]
     return ConversationHandler.END
 
 
-def main():
+def main():  # Главная функция
     updater = Updater(
         TOKEN)  # Создаём объект updater. # Вместо слова "TOKEN" надо разместить полученный от @BotFather токен
 
     dp = updater.dispatcher  # Получаем из него диспетчер сообщений.
 
     conv_handler_goroda = ConversationHandler(
-        entry_points=[CommandHandler('goroda', start_goroda)],  # Точка входа в диалог.
-        # Состояние внутри диалога.
-        # Вариант с двумя обработчиками, фильтрующими текстовые сообщения.
+        entry_points=[CommandHandler('goroda', start_goroda)],
         states={
-            # Функция читает ответ на первый вопрос и задаёт второй.
             1: [MessageHandler(Filters.text & ~Filters.command, sure_goroda)],
             2: [MessageHandler(Filters.text & ~Filters.command, goroda_player_turn)],
         },
         fallbacks=[CommandHandler('stop', stop_goroda)]  # Точка прерывания диалога. В данном случае — команда /stop.
     )
 
+    #  Присоединение функций
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("skills", skills))
     dp.add_handler(CommandHandler("play", play))
