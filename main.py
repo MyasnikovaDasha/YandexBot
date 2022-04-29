@@ -12,7 +12,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-TOKEN = '5296394501:AAEjbMymwTSV-nQCCHbLsNBlIvvDvszRGl4'
+TOKEN = '5296394501:AAFCYZnCB3woxOwgCc3DrSWZOsmo4ZYHbMM'
 
 with open('sorted_russian_cities.json', encoding="utf-8") as city_file:
     city_data = json.load(city_file)
@@ -454,9 +454,11 @@ def goroda_player_turn(update, context):  # Ход игрока и его про
         if word not in city_data[word[0]]:
             update.message.reply_text('Не знаю такого русского города')
             return 2
+        print(used_cities_log[-1][-1], word[0].lower())
         if not (used_cities_log[-1][-1] == word[0].lower()):
             update.message.reply_text('Не совпадает с буквой')
             return 2
+
 
         if word[0] not in used_cities:
             used_cities[word[0]] = [system_word]
@@ -468,6 +470,7 @@ def goroda_player_turn(update, context):  # Ход игрока и его про
         if not word:
             update.message.reply_text('Ой-ой. Похоже вы выиграли! Мои поздравления! Заканчиваю игру')
             stop_goroda(update, context)
+
 
         try:
             geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b" \
@@ -481,7 +484,7 @@ def goroda_player_turn(update, context):  # Ход игрока и его про
             update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. '
                                       f'Вам на {used_cities[word[0]][-1][-1].upper()}')
             update.message.reply_photo(coord_request)
-        except Exception:
+        except IndexeError:
             update.message.reply_text(f'{random.choice(phrases)} Мой город: {word}. '
                                       f'Вам на {used_cities[word[0]][-1][-1].upper()}')
             update.message.reply_text(f'Я не смог найти город на карте 😞')
@@ -525,8 +528,8 @@ def goroda_computer_turn(word):  # Ход компьютера
 
 def stop_goroda(update, context):  # Функция завершения игры в города
     update.message.reply_text("Принято! Интересно поиграли!")
-    for i in used_cities.keys():
-        del used_cities[i]
+    used_cities.clear()
+    used_cities_log.clear()
     return ConversationHandler.END
 
 
